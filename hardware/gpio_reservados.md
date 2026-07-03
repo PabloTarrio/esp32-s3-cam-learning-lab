@@ -2,8 +2,13 @@
 
 Documento de referencia rápida para decidir qué GPIO se pueden usar, cuáles están reservados y cuáles requieren precaución en la placa **ESP32-S3-CAM** usada en este repositorio.
 
-> Este documento complementa a `hardware/pinout.md`.  
-> Si hay duda entre usar este documento o el pinout general, se debe consultar primero `hardware/pinout.md` y después validar el pin mediante una prueba real.
+Este documento complementa a:
+
+```text
+hardware/pinout.md
+```
+
+Si hay duda entre este documento y el pinout general, se debe consultar primero `hardware/pinout.md` y después validar el pin mediante una prueba real.
 
 ---
 
@@ -13,29 +18,29 @@ El objetivo de este documento es evitar errores típicos al usar GPIO en una pla
 
 En esta placa no todos los GPIO del ESP32-S3 están disponibles para uso general, porque algunos están conectados a:
 
-- cámara OV2640,
-- memoria Flash,
-- PSRAM,
-- USB,
-- UART,
-- tarjeta SD,
-- LED RGB integrado,
-- botones integrados,
-- señales de arranque,
+- cámara OV2640;
+- memoria Flash;
+- PSRAM;
+- USB;
+- UART;
+- tarjeta SD;
+- LED RGB integrado;
+- botones integrados o funciones especiales;
+- señales de arranque;
 - posibles periféricos externos.
 
 ---
 
 ## 2. Clasificación rápida
 
-Los GPIO se clasificarán en cuatro grupos:
-
 | Categoría | Significado |
 |---|---|
 | Reservado | No usar para ejercicios generales. |
-| Precaución | Puede usarse solo si se entiende el conflicto posible. |
-| Candidato | Puede probarse en ejercicios básicos, pendiente de validación. |
-| Validado | Probado correctamente en esta placa. |
+| Precaución | Puede usarse solo si se entiende el posible conflicto. |
+| Candidato | Puede probarse en ejercicios básicos, pero todavía necesita validación. |
+| Validado | Probado correctamente en esta placa para un uso concreto. |
+
+> Un GPIO validado para un uso concreto no debe considerarse automáticamente libre para cualquier otro uso.
 
 ---
 
@@ -85,7 +90,7 @@ Estos pines están asociados a memoria externa o aparecen marcados como conflict
 
 ### Regla práctica
 
-No se usarán estos pines en ningún ejercicio de GPIO, comunicación, sensor o periférico externo.
+No se usarán estos pines en ejercicios de GPIO, comunicación, sensores o periféricos externos.
 
 ---
 
@@ -97,12 +102,12 @@ Estos pines están relacionados con depuración, programación, monitor serie o 
 |---:|---|---|
 | GPIO19 | USB D+ | No usar como GPIO general. |
 | GPIO20 | USB D- | No usar como GPIO general. |
-| GPIO43 | U0TXD / TX | Evitar para GPIO general. |
-| GPIO44 | U0RXD / RX | Evitar para GPIO general. |
+| GPIO43 | U0TXD / TX | Reservar para comunicación serie. |
+| GPIO44 | U0RXD / RX | Reservar para comunicación serie. |
 
 ### Regla práctica
 
-Durante el aprendizaje se usará el monitor serie de PlatformIO, así que estos pines deben mantenerse libres para comunicación y diagnóstico.
+Durante el aprendizaje se usará el monitor serie de PlatformIO. Estos pines deben mantenerse libres para comunicación y diagnóstico.
 
 ---
 
@@ -112,13 +117,13 @@ Según el pinout inicial de la placa, la tarjeta SD puede usar los siguientes pi
 
 | GPIO | Función SD | Recomendación |
 |---:|---|---|
-| GPIO38 | SD_CMD | Evitar. |
-| GPIO39 | SD_CLK | Evitar. |
-| GPIO40 | SD_DATA | Evitar. |
+| GPIO38 | SD_CMD | Reservar para SD. |
+| GPIO39 | SD_CLK | Reservar para SD. |
+| GPIO40 | SD_DATA | Reservar para SD. |
 
 ### Regla práctica
 
-No se usarán estos pines hasta confirmar si la placa tiene SD funcional y si estos GPIO están cableados al slot correspondiente.
+No se usarán estos pines para ejercicios generales mientras se mantenga la posibilidad de utilizar tarjeta SD en el futuro.
 
 ---
 
@@ -154,14 +159,52 @@ Estos pines pueden tener funciones especiales o estar conectados a elementos de 
 
 ---
 
-## 9. GPIO candidatos para pruebas iniciales
+## 9. GPIO validados
+
+| GPIO | Uso validado | Estado | Notas |
+|---:|---|---|---|
+| GPIO3 | Entrada digital con pulsador externo | Validado | Probado con pulsador externo conectado a GND usando `INPUT_PULLUP`. Validado con antirrebote por software y detección de flancos. |
+| GPIO48 | LED RGB integrado NeoPixel / WS2812 | Validado | Probado con `Adafruit_NeoPixel`. Reservado para RGB integrado. |
+
+### Nota sobre GPIO3
+
+`GPIO3` se ha validado con el siguiente cableado externo:
+
+```text
+GPIO3 ---- pulsador ---- GND
+```
+
+Configuración usada:
+
+```cpp
+pinMode(BUTTON_PIN, INPUT_PULLUP);
+```
+
+Lógica observada:
+
+```text
+Sin pulsar -> HIGH
+Pulsado    -> LOW
+```
+
+Se ha validado:
+
+- lectura digital;
+- `INPUT_PULLUP`;
+- antirrebote por software con `millis()`;
+- flanco descendente `HIGH -> LOW`;
+- flanco ascendente `LOW -> HIGH`;
+- cambio de color del RGB integrado con pulsación válida.
+
+---
+
+## 10. GPIO candidatos para pruebas futuras
 
 Los siguientes pines son candidatos para ejercicios básicos, pero deben validarse antes de considerarse libres.
 
 | GPIO | Motivo | Estado |
 |---:|---|---|
-| GPIO3 | Switch integrado | Candidato principal para botón. |
-| GPIO46 | Shutter integrado | Candidato secundario para botón. |
+| GPIO46 | Shutter integrado | Candidato con precaución. |
 | GPIO1 | Posible SDA / A0 | Candidato con precaución. |
 | GPIO2 | Posible SCL / A1 | Candidato con precaución. |
 | GPIO14 | Posible GPIO disponible | Candidato con precaución. |
@@ -172,7 +215,7 @@ Los siguientes pines son candidatos para ejercicios básicos, pero deben validar
 
 ---
 
-## 10. GPIO no disponibles o no recomendados
+## 11. GPIO no disponibles o no recomendados
 
 | GPIO | Motivo |
 |---:|---|
@@ -181,49 +224,57 @@ Los siguientes pines son candidatos para ejercicios básicos, pero deben validar
 
 ---
 
-## 11. Tabla resumen de decisión rápida
+## 12. Tabla resumen de decisión rápida
 
 | Grupo | GPIO | Uso recomendado |
 |---|---|---|
 | RGB integrado | GPIO48 | Usar solo para NeoPixel. |
+| Pulsador externo validado | GPIO3 | Validado como entrada digital con `INPUT_PULLUP`. |
 | Cámara | GPIO4-GPIO13, GPIO15-GPIO18 | No usar. |
 | Flash / PSRAM | GPIO26-GPIO32, GPIO35-GPIO37 | No usar. |
 | USB | GPIO19-GPIO20 | No usar. |
 | UART | GPIO43-GPIO44 | Reservar para comunicación serie. |
-| SD | GPIO38-GPIO40 | Evitar hasta validar. |
+| SD | GPIO38-GPIO40 | Reservar para SD. |
 | Boot | GPIO0 | Evitar. |
-| Botón candidato | GPIO3 | Probar primero. |
-| Botón candidato | GPIO46 | Probar si GPIO3 no sirve. |
+| Botón / shutter candidato | GPIO46 | Validar antes de usar. |
 | I2C candidato | GPIO1-GPIO2 | Validar antes. |
 | SPI candidato | GPIO41-GPIO42-GPIO47 | Validar antes. |
 
 ---
 
-## 12. Reglas prácticas antes de cablear
+## 13. Reglas prácticas antes de cablear
 
 Antes de conectar un componente externo:
 
-1. Consultar este archivo.
-2. Consultar `hardware/pinout.md`.
-3. Comprobar si el GPIO está físicamente expuesto.
-4. Confirmar que el componente trabaja a 3.3 V o adaptar niveles.
-5. Hacer una prueba mínima de lectura/escritura.
-6. Registrar el resultado en la bitácora de validación.
+- consultar este archivo;
+- consultar `hardware/pinout.md`;
+- comprobar si el GPIO está físicamente expuesto;
+- comprobar si el GPIO está reservado o validado para otro uso;
+- confirmar que el componente trabaja a 3.3 V o adaptar niveles;
+- hacer una prueba mínima de lectura/escritura;
+- registrar el resultado en la bitácora de validación.
 
 ---
 
-## 13. Bitácora de validación
+## 14. Bitácora de validación
 
 | Fecha | GPIO | Prueba | Resultado | Estado actualizado |
 |---|---:|---|---|---|
 | 2026-07-03 | GPIO48 | Control de NeoPixel integrado | Correcto | Validado para RGB. |
-| Pendiente | GPIO3 | Lectura de botón integrado | Pendiente | Candidato. |
-| Pendiente | GPIO46 | Lectura de botón/shutter | Pendiente | Candidato. |
+| 2026-07-03 | GPIO3 | Pulsador externo con `INPUT_PULLUP` | Correcto | Validado como entrada digital. |
+| 2026-07-03 | GPIO3 | Antirrebote por software con `millis()` | Correcto | Validado para pulsador externo con filtrado de rebote. |
+| 2026-07-03 | GPIO3 | Detección de flanco descendente y ascendente | Correcto | Validado para detección de eventos de pulsación y liberación. |
+| 2026-07-03 | GPIO3 + GPIO48 | Pulsador externo controlando RGB integrado | Correcto | Cada pulsación válida cambia el color del LED RGB. |
+| Pendiente | GPIO46 | Lectura de botón / shutter | Pendiente | Candidato con precaución. |
 
 ---
 
-## 14. Advertencia final
+## 15. Advertencia final
 
-Este documento es una guía de trabajo práctica. No sustituye las pruebas reales sobre la placa.
+Este documento es una guía práctica. No sustituye las pruebas reales sobre la placa.
 
-Cada vez que se confirme un GPIO como válido, conflictivo o reservado, debe actualizarse este archivo y, si procede, también `hardware/pinout.md`.
+Cada vez que se confirme un GPIO como válido, conflictivo o reservado, debe actualizarse este archivo y, si procede, también:
+
+```text
+hardware/pinout.md
+```

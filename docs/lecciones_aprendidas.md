@@ -8,16 +8,20 @@ Este documento recoge errores reales, decisiones técnicas y conceptos important
 
 ## 1. Propósito del documento
 
-Este archivo no es un diario cronológico completo. Para eso se usará la carpeta `journal/`.
+Este archivo no es un diario cronológico completo. Para eso se usará la carpeta:
+
+```text
+journal/
+```
 
 El objetivo de `lecciones_aprendidas.md` es recopilar aprendizajes reutilizables que puedan consultarse rápidamente más adelante.
 
 Cada lección debe intentar incluir:
 
-- contexto,
-- problema encontrado,
-- causa,
-- solución,
+- contexto;
+- problema encontrado;
+- causa;
+- solución;
 - conclusión práctica.
 
 ---
@@ -138,6 +142,37 @@ El RGB integrado está conectado a:
 
 ---
 
+### 3.4 GPIO3 validado como entrada digital con pulsador externo
+
+**Contexto:**  
+Durante el ejercicio `arduino/02_boton_gpio/` se conectó un pulsador externo en protoboard.
+
+**Configuración usada:**
+
+```text
+GPIO3 ---- pulsador ---- GND
+```
+
+```cpp
+pinMode(BUTTON_PIN, INPUT_PULLUP);
+```
+
+**Resultado:**  
+`GPIO3` funcionó correctamente como entrada digital con pulsador externo.
+
+**Conclusión práctica:**  
+`GPIO3` queda validado para este uso concreto:
+
+- entrada digital;
+- pulsador externo conectado a GND;
+- `INPUT_PULLUP`;
+- antirrebote por software;
+- detección de flancos.
+
+> Validar un GPIO para un uso concreto no significa que el GPIO sea automáticamente adecuado para cualquier otro uso.
+
+---
+
 ## 4. LED RGB integrado / NeoPixel
 
 ### 4.1 El RGB integrado no es un LED normal
@@ -239,9 +274,120 @@ pixel.setBrightness(30);
 
 ---
 
-## 5. C++ aplicado a sistemas embebidos
+## 5. Botones, antirrebote y flancos
 
-### 5.1 Paso por valor frente a paso por referencia
+### 5.1 Los pulsadores mecánicos generan rebote
+
+**Contexto:**  
+Al leer un pulsador externo con `digitalRead()`, una sola pulsación física generaba varias detecciones rápidas.
+
+**Problema:**  
+El programa podía imprimir varias veces `Pulsado` y `Liberado` durante una única pulsación.
+
+**Causa:**  
+Los pulsadores mecánicos no cambian de estado de forma perfectamente limpia. Durante unos milisegundos pueden abrir y cerrar contacto varias veces.
+
+**Solución:**  
+Implementar antirrebote por software usando `millis()`.
+
+**Conclusión práctica:**  
+Antes de asociar acciones a un pulsador, conviene filtrar el rebote mecánico.
+
+---
+
+### 5.2 Antirrebote con `millis()` mejor que con `delay()`
+
+**Contexto:**  
+El ejercicio del pulsador necesitaba ignorar cambios rápidos producidos por rebote.
+
+**Lección:**  
+Usar `millis()` permite comprobar si una lectura se mantiene estable durante un tiempo sin bloquear el programa.
+
+**Conclusión práctica:**  
+Para antirrebote se usará un patrón no bloqueante:
+
+```cpp
+if (current_reading != last_reading)
+{
+    last_debounce_time = millis();
+}
+
+if ((millis() - last_debounce_time) > DEBOUNCE_TIME_MS)
+{
+    // aceptar cambio estable
+}
+```
+
+---
+
+### 5.3 Estado no es lo mismo que evento
+
+**Contexto:**  
+Una vez filtrado el rebote, el programa podía saber si el botón estaba pulsado o liberado.
+
+**Lección:**  
+Hay que distinguir entre:
+
+- estado: el botón está pulsado o liberado;
+- evento: el botón acaba de cambiar de estado.
+
+**Conclusión práctica:**  
+Para ejecutar una acción una sola vez por pulsación, hay que detectar el flanco, no simplemente leer el estado.
+
+---
+
+### 5.4 Con `INPUT_PULLUP`, la pulsación es un flanco descendente
+
+**Contexto:**  
+El pulsador externo se conectó entre `GPIO3` y `GND`, usando `INPUT_PULLUP`.
+
+**Lección:**  
+La lógica observada es:
+
+```text
+Sin pulsar -> HIGH
+Pulsado    -> LOW
+```
+
+Por tanto:
+
+```text
+HIGH -> LOW = flanco descendente = pulsación
+LOW -> HIGH = flanco ascendente  = liberación
+```
+
+**Conclusión práctica:**  
+Para ejecutar una acción al pulsar se debe detectar:
+
+```cpp
+if (previous_button_state == HIGH && button_state == LOW)
+{
+    // acción al pulsar
+}
+```
+
+---
+
+### 5.5 Una acción por pulsación válida
+
+**Contexto:**  
+Se usó el flanco descendente del pulsador para cambiar el color del RGB integrado.
+
+**Resultado:**  
+Cada pulsación válida cambia el color una sola vez.
+
+**Conclusión práctica:**  
+El patrón correcto es:
+
+```text
+lectura -> antirrebote -> estado estable -> detección de flanco -> acción
+```
+
+---
+
+## 6. C++ aplicado a sistemas embebidos
+
+### 6.1 Paso por valor frente a paso por referencia
 
 **Contexto:**  
 Se creó una función que recibía un objeto `Adafruit_NeoPixel`.
@@ -268,7 +414,48 @@ Cuando se quiera modificar un objeto existente o evitar copias innecesarias, se 
 
 ---
 
-### 5.2 Shadowing de variables
+### 6.2 Paso por referencia para modificar variables externas
+
+**Contexto:**  
+Se creó una función para cambiar el índice de color.
+
+**Problema:**  
+Si el índice se pasa por valor, la función modifica una copia y el índice original no cambia.
+
+**Solución:**  
+Pasar el índice por referencia:
+
+```cpp
+void cambiar_color(Adafruit_NeoPixel &rgb_led, int &index)
+```
+
+**Conclusión práctica:**  
+Si una función debe modificar una variable externa, se debe usar referencia o devolver el nuevo valor.
+
+---
+
+### 6.3 Usar el objeto recibido como parámetro
+
+**Contexto:**  
+Una función recibía un objeto `Adafruit_NeoPixel &rgb_led`, pero dentro se usaba el objeto global `pixel`.
+
+**Problema:**  
+La función parecía genérica, pero realmente dependía de una variable global oculta.
+
+**Solución:**  
+Usar el objeto recibido como parámetro:
+
+```cpp
+rgb_led.setPixelColor(0, rgb_led.Color(255, 0, 0));
+rgb_led.show();
+```
+
+**Conclusión práctica:**  
+Si una función recibe un objeto como parámetro, debe operar sobre ese objeto salvo que haya una razón explícita para no hacerlo.
+
+---
+
+### 6.4 Shadowing de variables
 
 **Contexto:**  
 Se usó una variable global para almacenar el brillo actual.
@@ -295,7 +482,7 @@ Prestar atención al alcance de variables globales, locales y estáticas.
 
 ---
 
-### 5.3 Inicializar siempre las variables
+### 6.5 Inicializar siempre las variables
 
 **Contexto:**  
 Se detectó el riesgo de usar una variable antes de darle valor.
@@ -312,7 +499,7 @@ int actual_bright = 20;
 
 ---
 
-### 5.4 Separación de responsabilidades
+### 6.6 Separación de responsabilidades
 
 **Contexto:**  
 Se debatió si una función encargada de actualizar el brillo debía imprimir por consola.
@@ -337,9 +524,9 @@ if (new_bright != actual_bright)
 
 ---
 
-## 6. Puerto serie y depuración
+## 7. Puerto serie y depuración
 
-### 6.1 El monitor serie es una herramienta de diagnóstico fundamental
+### 7.1 El monitor serie es una herramienta de diagnóstico fundamental
 
 **Contexto:**  
 El primer código imprimía mensajes por serie.
@@ -357,7 +544,7 @@ Serial.println("Inicio OK");
 
 ---
 
-### 6.2 Evitar imprimir continuamente en `loop()`
+### 7.2 Evitar imprimir continuamente en `loop()`
 
 **Contexto:**  
 Si se imprime en cada ciclo de `loop()`, el monitor serie se satura.
@@ -378,9 +565,9 @@ if (new_bright != actual_bright)
 
 ---
 
-## 7. Documentación y repositorio
+## 8. Documentación y repositorio
 
-### 7.1 Separar documentación estable de planificación
+### 8.1 Separar documentación estable de planificación
 
 **Contexto:**  
 Algunos documentos técnicos incluían secciones de próximos pasos.
@@ -392,7 +579,7 @@ Eso obliga a actualizar muchos archivos con frecuencia.
 Los documentos técnicos deben ser estables y describir información de referencia.
 
 **Conclusión práctica:**  
-Los próximos pasos deben vivir en:
+La planificación debe vivir en:
 
 ```text
 ROADMAP.md
@@ -404,7 +591,7 @@ No en cada archivo técnico.
 
 ---
 
-### 7.2 Usar `assets/` para recursos visuales
+### 8.2 Usar `assets/` para recursos visuales
 
 **Contexto:**  
 Se planteó guardar imágenes dentro de `docs/images/`.
@@ -424,7 +611,7 @@ assets/
 
 ---
 
-### 7.3 Evitar tildes y espacios en nombres técnicos
+### 8.3 Evitar tildes y espacios en nombres técnicos
 
 **Contexto:**  
 Se creó inicialmente una carpeta con nombre en castellano con tilde.
@@ -447,9 +634,9 @@ docs/imágenes/
 
 ---
 
-## 8. Seguridad y credenciales
+## 9. Seguridad y credenciales
 
-### 8.1 No subir credenciales al repositorio
+### 9.1 No subir credenciales al repositorio
 
 **Contexto:**  
 Más adelante se trabajará con WiFi, MQTT y servicios externos.
@@ -475,9 +662,9 @@ secrets.example.h
 
 ---
 
-## 9. Alimentación y niveles lógicos
+## 10. Alimentación y niveles lógicos
 
-### 9.1 Los GPIO trabajan a 3.3 V
+### 10.1 Los GPIO trabajan a 3.3 V
 
 **Contexto:**  
 El ESP32-S3 no debe tratarse como un Arduino UNO de 5 V.
@@ -488,14 +675,14 @@ No se deben aplicar señales de 5 V directamente a los GPIO.
 **Conclusión práctica:**  
 Antes de conectar sensores o módulos externos, comprobar:
 
-- tensión de alimentación,
-- nivel lógico de salida,
-- necesidad de divisor resistivo o conversor de nivel,
+- tensión de alimentación;
+- nivel lógico de salida;
+- necesidad de divisor resistivo o conversor de nivel;
 - GND común.
 
 ---
 
-### 9.2 Cámara y WiFi pueden aumentar el consumo
+### 10.2 Cámara y WiFi pueden aumentar el consumo
 
 **Contexto:**  
 Los primeros ejercicios son ligeros, pero cámara y WiFi exigirán más alimentación.
@@ -508,16 +695,16 @@ Usar cable USB corto y de calidad, y revisar alimentación al trabajar con cáma
 
 ---
 
-## 10. Criterios para añadir nuevas lecciones
+## 11. Criterios para añadir nuevas lecciones
 
 Añadir una nueva lección cuando ocurra alguno de estos casos:
 
-- se detecte un error conceptual,
-- se corrija una mala práctica,
-- se confirme un comportamiento concreto de la placa,
-- se resuelva un problema de compilación o carga,
-- se descubra una limitación de hardware,
-- se tome una decisión de arquitectura,
+- se detecte un error conceptual;
+- se corrija una mala práctica;
+- se confirme un comportamiento concreto de la placa;
+- se resuelva un problema de compilación o carga;
+- se descubra una limitación de hardware;
+- se tome una decisión de arquitectura;
 - se confirme una buena práctica reutilizable.
 
 Formato recomendado:

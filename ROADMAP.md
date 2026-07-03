@@ -79,15 +79,14 @@ El objetivo no es únicamente crear ejemplos aislados, sino construir progresiva
 
 ### Ejercicios
 
-- [ ] Salida digital simple.
-- [ ] Entrada digital simple.
-- [ ] Uso de `INPUT_PULLUP`.
-- [ ] Lectura de botón integrado.
-- [ ] Lectura de botón externo.
-- [ ] Detección de estado pulsado/liberado.
-- [ ] Detección de flanco.
-- [ ] Cambio de color del RGB mediante pulsador.
-- [ ] Documentar cableado.
+- [x] Salida digital simple.
+- [x] Entrada digital simple.
+- [x] Uso de `INPUT_PULLUP`.
+- [x] Lectura de botón externo.
+- [x] Detección de estado pulsado/liberado.
+- [x] Detección de flanco.
+- [x] Cambio de color del RGB mediante pulsador.
+- [x] Documentar cableado.
 
 ### Conceptos
 
