@@ -36,6 +36,9 @@ El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/) y 
   - antirrebote por software con `millis()`;
   - detección de flanco descendente y ascendente;
   - cambio de color del LED RGB integrado en cada pulsación válida.
+- Added Arduino exercise `03_boton_rgb_estado`.
+  - Added consolidation exercise using external button on GPIO3 and RGB NeoPixel on GPIO48.
+  - Added RGB color change on button release using rising edge detection.
 
 ### Changed
 
@@ -96,6 +99,7 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - Para ejecutar una acción una sola vez por pulsación, conviene detectar flancos y no solo estados.
 - Una función que debe modificar una variable externa debe recibirla por referencia o devolver el nuevo valor.
 - Si una función recibe un objeto como parámetro, debe operar sobre ese objeto y no sobre una variable global oculta.
+- Re-inforced debounce, edge detection and pass-by-reference concepts.
 
 ### Fixed
 
