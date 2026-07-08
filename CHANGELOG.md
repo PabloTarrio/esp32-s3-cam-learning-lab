@@ -39,6 +39,12 @@ El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/) y 
 - Added Arduino exercise `03_boton_rgb_estado`.
   - Added consolidation exercise using external button on GPIO3 and RGB NeoPixel on GPIO48.
   - Added RGB color change on button release using rising edge detection.
+- Añadido ejercicio Arduino `04_interrupciones`.
+  - Añadidad detección de interrupción externa en `GPIO3` usando `attachInterrupt()`.
+  - Añadida interrupción por flanco descendente `FALLING` con pulsador externo y `INPUT_PULLUP`.
+  - Añadido uso de variable `volatile` para comunicar la ISR con `loop()`.
+  - Añadido anti-rebote de interrupciones mediante temporización con `millis()`.
+  - Añadido cambio de color RGB integrado mediante interrupción válida.
 
 ### Changed
 
@@ -70,6 +76,11 @@ El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/) y 
 - Documentado el uso de `Adafruit_NeoPixel` para el RGB integrado.
 - Documentada la separación entre documentación estable, roadmap, changelog y journal.
 - Documentado el cableado externo del pulsador con protoboard:
+- Documentado el ejercicio `arduino/04_interrupciones/`.
+- Documentada la diferencia entre `FALLING` y `RISING` con `INPUT_PULLUP`.
+- Documentada la comparación entre polling e interrupciones.
+- Documentado qué debe y qué no debe hacerse dentro de una ISR.
+- Documentado el error detectado al limpiar la bandera de interrupción antes de validar el antirrebote.
 
 ```text
 GPIO3 ---- pulsador ---- GND
@@ -100,6 +111,11 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - Una función que debe modificar una variable externa debe recibirla por referencia o devolver el nuevo valor.
 - Si una función recibe un objeto como parámetro, debe operar sobre ese objeto y no sobre una variable global oculta.
 - Re-inforced debounce, edge detection and pass-by-reference concepts.
+- Las interrupciones no eliminan el rebote mecánico de un pulsador.
+- La ISR debe mantenerse lo más corta posible.
+- El trabajo pesado debe hacerse en `loop()`, no dentro de la ISR.
+- Una bandera de interrupción pendiente no debe limpiarse antes de completar la validación del evento.
+- Con `INPUT_PULLUP`, `FALLING` representa la pulsación y `RISING` representa la liberación.
 
 ### Fixed
 
@@ -110,6 +126,7 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
   - `Adafruit_NeoPixel &rgb_led`
   - `int &index`
 - Corregido el uso interno de funciones para operar sobre el objeto recibido por parámetro (`rgb_led`) en lugar de depender del objeto global `pixel`.
+- Corregida la lógica de antirrebote con interrupciones para no perder eventos pendientes antes de que finalice `DEBOUNCE_TIME_MS`.
 
 ---
 

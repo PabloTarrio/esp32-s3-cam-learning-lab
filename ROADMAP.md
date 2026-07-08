@@ -105,12 +105,12 @@ El objetivo no es únicamente crear ejemplos aislados, sino construir progresiva
 
 ### Ejercicios
 
-- [ ] Interrupción por flanco descendente.
-- [ ] Interrupción por flanco ascendente.
-- [ ] Uso de `volatile`.
-- [ ] Comunicación entre ISR y `loop()`.
-- [ ] Antirrebote básico con interrupciones.
-- [ ] Antirrebote mediante temporización.
+- [x] Interrupción por flanco descendente.
+- [x] Interrupción por flanco ascendente.
+- [x] Uso de `volatile`.
+- [x] Comunicación entre ISR y `loop()`.
+- [x] Antirrebote básico con interrupciones.
+- [x] Antirrebote mediante temporización.
 - [ ] Comparar polling frente a interrupción.
 
 ### Conceptos

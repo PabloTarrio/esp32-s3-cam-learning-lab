@@ -61,7 +61,8 @@ esp32-s3-cam-learning-lab/
 ├── arduino/
 │   ├── 01_rgb_neopixel/
 │   ├── 02_boton_gpio/
-│   └── 03_boton_gpio_estado/
+│   ├── 03_boton_gpio_estado/
+│   └── 04_interrupciones/
 │
 ├── esp-idf/
 │   └── README.md
