@@ -49,6 +49,11 @@ El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/) y 
   - Añadido primer ejemplo de temporización no bloqueante usando `millis()`.
   - Añadido parpadeo del LED RGB integrado en `GPIO48` sin usar `delay()`.
   - Añadida documentación del ejercicio `arduino/05_millis_no_bloqueante/`.
+- Añadido ejercicio Arduino `05b_millis_rgb_boton`.
+  - Añadido ejemplo de ejecución cooperativa en `loop()` combinando RGB y pulsador.
+  - Añadido cambio de modo mediante pulsador externo en `GPIO3`.
+  - Añadido parpadeo del RGB integrado en `GPIO48` sin usar `delay()`.
+  - Añadida documentación del ejercicio `arduino/05b_millis_rgb_boton/`.
 
 ### Changed
 
@@ -88,6 +93,12 @@ El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/) y 
 - Documentado el patrón básico de temporización no bloqueante basado en `current_millis`, `previous_millis` e `interval`. 
 - Documentada la diferencia entre `delay()` bloqueante y temporización con `millis()`.
 - Documentada la relación conceptual entre `millis()` y futuros temporizadores tipo PLC.
+- Documentado el uso combinado de `millis()`, antirrebote y cambio de modos.
+- Documentada la estructura de tareas cooperativas dentro de `loop()`.
+- Documentada la relación del ejercicio con futuras máquinas de estado.
+- Documentados errores comunes detectados:
+    - llamada a función sin paréntesis;
+    - uso de comparación `!=` en lugar de asignación con negación `= !`.
 
 ```text
 GPIO3 ---- pulsador ---- GND
@@ -127,6 +138,11 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - millis() permite comprobar el paso del tiempo sin detener loop().
 - Una variable de estado permite alternar una salida sin bloquear el programa.
 - El patrón con millis() será la base para construir temporizadores tipo TON, TOF y TP.
+- Un programa puede atender varias tareas dentro de `loop()` si ninguna bloquea la ejecución.
+- `millis()` permite mantener un parpadeo activo mientras se sigue leyendo un pulsador.
+- Una función debe llamarse con paréntesis para ejecutarse.
+- `blink_state = !blink_state` invierte un estado booleano; `blink_state != blink_state` solo compara y no modifica la variable.
+- Los modos de funcionamiento son una aproximación inicial a una máquina de estados.
 
 ### Fixed
 
