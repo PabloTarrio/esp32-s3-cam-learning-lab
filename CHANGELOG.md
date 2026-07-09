@@ -45,6 +45,10 @@ El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/) y 
   - Añadido uso de variable `volatile` para comunicar la ISR con `loop()`.
   - Añadido anti-rebote de interrupciones mediante temporización con `millis()`.
   - Añadido cambio de color RGB integrado mediante interrupción válida.
+- Añadido ejercicio Arduino `05_millis_no_bloqueante`.
+  - Añadido primer ejemplo de temporización no bloqueante usando `millis()`.
+  - Añadido parpadeo del LED RGB integrado en `GPIO48` sin usar `delay()`.
+  - Añadida documentación del ejercicio `arduino/05_millis_no_bloqueante/`.
 
 ### Changed
 
@@ -81,6 +85,9 @@ El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/) y 
 - Documentada la comparación entre polling e interrupciones.
 - Documentado qué debe y qué no debe hacerse dentro de una ISR.
 - Documentado el error detectado al limpiar la bandera de interrupción antes de validar el antirrebote.
+- Documentado el patrón básico de temporización no bloqueante basado en `current_millis`, `previous_millis` e `interval`. 
+- Documentada la diferencia entre `delay()` bloqueante y temporización con `millis()`.
+- Documentada la relación conceptual entre `millis()` y futuros temporizadores tipo PLC.
 
 ```text
 GPIO3 ---- pulsador ---- GND
@@ -116,6 +123,10 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - El trabajo pesado debe hacerse en `loop()`, no dentro de la ISR.
 - Una bandera de interrupción pendiente no debe limpiarse antes de completar la validación del evento.
 - Con `INPUT_PULLUP`, `FALLING` representa la pulsación y `RISING` representa la liberación.
+- delay() bloquea la ejecución del programa e impide atender otras tareas durante ese tiempo.
+- millis() permite comprobar el paso del tiempo sin detener loop().
+- Una variable de estado permite alternar una salida sin bloquear el programa.
+- El patrón con millis() será la base para construir temporizadores tipo TON, TOF y TP.
 
 ### Fixed
 

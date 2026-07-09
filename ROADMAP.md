@@ -111,7 +111,7 @@ El objetivo no es únicamente crear ejemplos aislados, sino construir progresiva
 - [x] Comunicación entre ISR y `loop()`.
 - [x] Antirrebote básico con interrupciones.
 - [x] Antirrebote mediante temporización.
-- [ ] Comparar polling frente a interrupción.
+- [x] Comparar polling frente a interrupción.
 
 ### Conceptos
 
@@ -126,15 +126,21 @@ El objetivo no es únicamente crear ejemplos aislados, sino construir progresiva
 
 ## Fase 4 - Temporización no bloqueante
 
-**Objetivo:** abandonar progresivamente el uso de `delay()` en programas con varias tareas.
+**Objetivo:** abandonar progresivamente el uso de `delay()` en programas con varias tareas y construir temporizadores reutilizables inspirados en bloques PLC.
 
 ### Ejercicios
 
 - [ ] Parpadeo con `millis()`.
 - [ ] Temporizador software simple.
-- [ ] Máquina de estados básica.
 - [ ] RGB + botón sin bloqueos.
 - [ ] Varias tareas simuladas en `loop()`.
+- [ ] Máquina de estados básica.
+- [ ] Implementación básica de `TON`.
+- [ ] Implementación básica de `TOF`.
+- [ ] Implementación básica de `TP`.
+- [ ] Detección de flanco `R_TRIG` y `F_TRIG`.
+- [ ] Extracción a librería local `lib/plc_blocks`.
+- [ ] Uso de la librería desde un ejercicio Arduino.
 
 ### Conceptos
 
@@ -142,7 +148,9 @@ El objetivo no es únicamente crear ejemplos aislados, sino construir progresiva
 - `millis()`.
 - Temporización cooperativa.
 - Máquina de estados.
-- Escalabilidad del código.
+- Estado interno.
+- Bloques tipo PLC en C++.
+- Reutilización mediante librerías locales PlatformIO.
 
 ---
 
