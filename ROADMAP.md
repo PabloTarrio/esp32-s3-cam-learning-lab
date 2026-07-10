@@ -134,7 +134,7 @@ El objetivo no es únicamente crear ejemplos aislados, sino construir progresiva
 - [x] Temporizador software simple.
 - [x] RGB + botón sin bloqueos.
 - [x] Varias tareas simuladas en `loop()`.
-- [ ] Máquina de estados básica.
+- [x] Máquina de estados básica.
 - [ ] Implementación básica de `TON`.
 - [ ] Implementación básica de `TOF`.
 - [ ] Implementación básica de `TP`.

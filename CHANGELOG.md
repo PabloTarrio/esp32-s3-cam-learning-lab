@@ -62,6 +62,14 @@ El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/) y 
   - RGB integrado en `GPIO48`;
   - cambio de modo;
   - salida periódica por `Serial`.
+- Añadido ejercicio Arduino `06_maquina_estado_basica`.
+- Añadida primera máquina de estados básica usando `enum`.
+- Añadida separación entre:
+  - detección de evento;
+  - transición de estado;
+  - ejecución del estado actual.
+- Añadido control del RGB integrado en `GPIO48` según estado del sistema.
+- Añadida impresión periódica del estado actual por monitor serie usando nombres de estado.
 
 ### Changed
 
@@ -137,6 +145,14 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
   - reinicio continuo del parpadeo al llamar repetidamente a `aplicar_modo_actual()`;
   - comparación incorrecta contra `last_reading` en el antirrebote;
   - impresión periódica sin actualizar `previous_serial_millis`.
+- Documentada la evolución desde modos numéricos hacia estados con nombre.
+- Documentada la estructura básica de una máquina de estados:
+  - estados;
+  - eventos;
+  - transiciones;
+  - acciones asociadas a estado.
+- Documentado el uso de `enum EstadoSistema`.
+- Documentada la relación del ejercicio con máquinas de estado más avanzadas y bloques tipo PLC.
 
 ### Learned
 
@@ -167,6 +183,11 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - `aplicar_modo_actual()` debe ejecutarse al cambiar de modo, no continuamente en cada vuelta de `loop()`.
 - Para validar un cambio estable del pulsador, la lectura debe compararse contra el estado confirmado `button_state`.
 - Una impresión periódica con `millis()` debe actualizar su marca temporal después de imprimir.
+- Usar `enum` mejora la legibilidad frente a modos numéricos.
+- Una máquina de estados sencilla puede separar claramente entrada, transición y salida.
+- La función que detecta eventos no debe mezclarse con la función que ejecuta transiciones.
+- Imprimir nombres de estado facilita la depuración frente a imprimir valores numéricos del `enum`.
+- Las acciones cíclicas, como el parpadeo no bloqueante, deben ejecutarse solo en los estados que las necesitan.
 
 ### Fixed
 
@@ -178,6 +199,8 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
   - `int &index`
 - Corregido el uso interno de funciones para operar sobre el objeto recibido por parámetro (`rgb_led`) en lugar de depender del objeto global `pixel`.
 - Corregida la lógica de antirrebote con interrupciones para no perder eventos pendientes antes de que finalice `DEBOUNCE_TIME_MS`.
+- Corregida la doble llamada a `detectar_pulsacion_valida()` para evitar consumir el evento antes de ejecutar la transición de estado.
+- Mejorada la impresión del estado actual para mostrar nombres explícitos en lugar de valores numéricos.
 
 ---
 
@@ -291,4 +314,5 @@ Para documentación nueva o ampliada.
 ### Learned
 
 Para registrar aprendizajes relevantes derivados de errores, pruebas o decisiones técnicas.
+
 
