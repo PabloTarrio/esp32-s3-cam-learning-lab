@@ -64,7 +64,10 @@ esp32-s3-cam-learning-lab/
 │   ├── 03_boton_gpio_estado/
 │   ├── 04_interrupciones/
 │   ├── 05_millis_no_bloqueante/
-│   └── 05b_millis_rgb_boton/
+│   ├── 05b_millis_rgb_boton/
+│   ├── 05c_tareas_cooperativas/
+│   ├── 06_maquina_estados_basica/
+│   └── 07_temporizador_software_simple/
 │
 ├── esp-idf/
 │   └── README.md

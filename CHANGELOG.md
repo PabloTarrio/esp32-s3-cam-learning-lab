@@ -70,6 +70,13 @@ El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/) y 
   - ejecución del estado actual.
 - Añadido control del RGB integrado en `GPIO48` según estado del sistema.
 - Añadida impresión periódica del estado actual por monitor serie usando nombres de estado.
+- Añadido ejercicio Arduino `07_temporizador_software_simple`.
+- Añadida función reutilizable `temporizador_cumplido()` para temporización no bloqueante.
+- Añadido uso de paso por referencia para actualizar marcas temporales.
+- Añadida reutilización de `temporizador_cumplido()` en:
+  - parpadeo RGB;
+  - impresión periódica por monitor serie.
+- Añadida evolución desde temporización manual con `millis()` hacia una abstracción reutilizable.
 
 ### Changed
 
@@ -115,6 +122,13 @@ El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/) y 
 - Documentados errores comunes detectados:
     - llamada a función sin paréntesis;
     - uso de comparación `!=` en lugar de asignación con negación `= !`.
+- Documentao el patrón encapsulado:
+```cpp
+current_time - previous_time >= interval
+```
+- Documentacto el uso de `temporizador_cumplido()` como paso previo a temporizadores **TON**, **TOF**, **TP**.
+- Documentada la diferencia entre temporización periódica y antirrebote.
+- Documentado por qué el antirrebote mantiene comparación explícita con `millis()` en lugar de usar `temporizador_cumplido()`
 
 ```text
 GPIO3 ---- pulsador ---- GND
@@ -188,6 +202,11 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - La función que detecta eventos no debe mezclarse con la función que ejecuta transiciones.
 - Imprimir nombres de estado facilita la depuración frente a imprimir valores numéricos del `enum`.
 - Las acciones cíclicas, como el parpadeo no bloqueante, deben ejecutarse solo en los estados que las necesitan.
+- Una fucnión reutilizable puede reducir código repetido al trabajar con varias tareas temporizadas.
+- El paso por referencia permite actualizar la marca temporal original desde una función.
+- No todas las variables temporales tienen el mismo significado: una referencia periódica no es lo mismo que una marca de ultima cambio de entrada.
+- `temporizador_cumplido()` es adecuado para tareas periódicas, pero no necesariamente para antirrebote.
+- Este patrón prepara el cambio hacia temporizadores con estado interno tipo **TON**, **TOF** y **TP**.
 
 ### Fixed
 
@@ -316,3 +335,16 @@ Para documentación nueva o ampliada.
 Para registrar aprendizajes relevantes derivados de errores, pruebas o decisiones técnicas.
 
 
+
+
+
+### Added
+
+
+
+### Documented
+
+- Documentado el patrón encapsulado:
+
+```cpp
+current_time - previous_time >= interval
