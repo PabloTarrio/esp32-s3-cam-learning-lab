@@ -130,10 +130,10 @@ El objetivo no es únicamente crear ejemplos aislados, sino construir progresiva
 
 ### Ejercicios
 
-- [ ] Parpadeo con `millis()`.
-- [ ] Temporizador software simple.
-- [ ] RGB + botón sin bloqueos.
-- [ ] Varias tareas simuladas en `loop()`.
+- [x] Parpadeo con `millis()`.
+- [x] Temporizador software simple.
+- [x] RGB + botón sin bloqueos.
+- [x] Varias tareas simuladas en `loop()`.
 - [ ] Máquina de estados básica.
 - [ ] Implementación básica de `TON`.
 - [ ] Implementación básica de `TOF`.

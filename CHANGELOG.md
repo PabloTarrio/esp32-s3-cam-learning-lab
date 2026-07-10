@@ -54,6 +54,14 @@ El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/) y 
   - Añadido cambio de modo mediante pulsador externo en `GPIO3`.
   - Añadido parpadeo del RGB integrado en `GPIO48` sin usar `delay()`.
   - Añadida documentación del ejercicio `arduino/05b_millis_rgb_boton/`.
+- Añadido ejercicio Arduino `05c_tareas_cooperativas`.
+  - Añadido ejemplo de varias tareas cooperativas ejecutándose en `loop()` sin usar `delay()`.
+  - Añadida impresión periódica por puerto serie usando `millis()`.
+  - Añadida gestión simultánea de:
+  - pulsador externo en `GPIO3`;
+  - RGB integrado en `GPIO48`;
+  - cambio de modo;
+  - salida periódica por `Serial`.
 
 ### Changed
 
@@ -119,6 +127,17 @@ Pulsado    -> LOW
 lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 ```
 
+- Documentada la estructura de tareas cooperativas dentro de `loop()`.
+- Documentado el uso de varios temporizadores basados en `millis()`:
+  - `previous_blink_millis`;
+  - `previous_serial_millis`;
+  - `last_debounce_time`.
+- Documentada la relación entre modos de funcionamiento y futura máquina de estados.
+- Documentados errores encontrados:
+  - reinicio continuo del parpadeo al llamar repetidamente a `aplicar_modo_actual()`;
+  - comparación incorrecta contra `last_reading` en el antirrebote;
+  - impresión periódica sin actualizar `previous_serial_millis`.
+
 ### Learned
 
 - Diferencia entre lectura directa de un pulsador y lectura filtrada con antirrebote.
@@ -143,6 +162,11 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - Una función debe llamarse con paréntesis para ejecutarse.
 - `blink_state = !blink_state` invierte un estado booleano; `blink_state != blink_state` solo compara y no modifica la variable.
 - Los modos de funcionamiento son una aproximación inicial a una máquina de estados.
+- Una tarea cooperativa debe devolver el control rápidamente si no tiene que actuar.
+- Cada temporización no bloqueante necesita su propia referencia temporal.
+- `aplicar_modo_actual()` debe ejecutarse al cambiar de modo, no continuamente en cada vuelta de `loop()`.
+- Para validar un cambio estable del pulsador, la lectura debe compararse contra el estado confirmado `button_state`.
+- Una impresión periódica con `millis()` debe actualizar su marca temporal después de imprimir.
 
 ### Fixed
 
@@ -267,3 +291,4 @@ Para documentación nueva o ampliada.
 ### Learned
 
 Para registrar aprendizajes relevantes derivados de errores, pruebas o decisiones técnicas.
+
