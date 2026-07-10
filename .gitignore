@@ -4,7 +4,6 @@
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch/
-.code-workspace
 
 # Build files
 build/
@@ -31,3 +30,6 @@ wifi_credentials.h
 
 # Logs
 *.log
+
+# VSCode workspace
+*.code-workspace
