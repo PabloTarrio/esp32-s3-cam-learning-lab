@@ -77,6 +77,15 @@ El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/) y 
   - parpadeo RGB;
   - impresión periódica por monitor serie.
 - Añadida evolución desde temporización manual con `millis()` hacia una abstracción reutilizable.
+- Añadido ejercicio Arduino `08_ton_basico`.
+- Añadida primera implementación de un temporizador tipo `TON` inspirado en PLC.
+- Añadida clase C++ `TON` con estado interno.
+- Añadidos métodos:
+  - `update(bool in, unsigned long pt)`;
+  - `Q()`;
+  - `ET()`.
+- Añadida prueba práctica usando pulsador externo en `GPIO3` como entrada `IN`.
+- Añadido control del RGB integrado en `GPIO48` mediante la salida `Q` del temporizador.
 
 ### Changed
 
@@ -167,6 +176,10 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
   - acciones asociadas a estado.
 - Documentado el uso de `enum EstadoSistema`.
 - Documentada la relación del ejercicio con máquinas de estado más avanzadas y bloques tipo PLC.
+- Documentada la equivalencia entre un bloque `TON` de PLC y una clase C++.
+- Documentados los conceptos `IN`, `PT`, `Q` y `ET`.
+- Documentada la diferencia entre una función auxiliar de temporización y un objeto con estado interno.
+- Documentado el uso de `millis()` dentro de un temporizador no bloqueante con estado propio.
 
 ### Learned
 
@@ -207,6 +220,11 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - No todas las variables temporales tienen el mismo significado: una referencia periódica no es lo mismo que una marca de ultima cambio de entrada.
 - `temporizador_cumplido()` es adecuado para tareas periódicas, pero no necesariamente para antirrebote.
 - Este patrón prepara el cambio hacia temporizadores con estado interno tipo **TON**, **TOF** y **TP**.
+- Un temporizador tipo `TON` necesita recordar estado interno entre llamadas.
+- La variable `timing` evita reiniciar `start_time` en cada ciclo mientras `IN` permanece activo.
+- Un bloque PLC puede representarse en C++ mediante una clase con métodos de actualización y consulta.
+- `update()` debe llamarse cíclicamente desde `loop()`, igual que un bloque PLC se evalúa en cada ciclo.
+- `Q()` y `ET()` deben funcionar como métodos de consulta y no modificar el estado interno del objeto.
 
 ### Fixed
 
@@ -220,6 +238,12 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - Corregida la lógica de antirrebote con interrupciones para no perder eventos pendientes antes de que finalice `DEBOUNCE_TIME_MS`.
 - Corregida la doble llamada a `detectar_pulsacion_valida()` para evitar consumir el evento antes de ejecutar la transición de estado.
 - Mejorada la impresión del estado actual para mostrar nombres explícitos en lugar de valores numéricos.
+- Corregido el constructor `TON()` para inicializar todas las variables internas.
+- Corregida la lógica de `update()` separando claramente:
+  - reset cuando `IN = false`;
+  - arranque de temporización;
+  - actualización de `ET`;
+  - activación de `Q`.
 
 ---
 
