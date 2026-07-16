@@ -96,6 +96,17 @@ El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/) y 
 - Añadida prueba práctica usando pulsador externo en `GPIO3` como entrada `IN`.
 - Añadido control del RGB integrado en `GPIO48` mediante la salida `Q` del temporizador.
 - Añadido ejemplo visual de retardo a la desconexión: el RGB permanece encendido tras soltar el pulsador.
+- Añadido ejercicio Arduino `10_tp_basico`.
+- Añadida implementación de un temporizador tipo `TP` inspirado en PLC.
+- Añadida clase C++ `TP` con estado interno.
+- Añadidos métodos:
+  - `update(bool in, unsigned long pt)`;
+  - `Q()`;
+  - `ET()`.
+- Añadida detección interna de flanco ascendente mediante `previous_in`.
+- Añadida prueba práctica usando pulsador externo en `GPIO3` como entrada `IN`.
+- Añadido control del RGB integrado en `GPIO48` mediante la salida `Q` del temporizador.
+- Añadido ejemplo visual de pulso temporizado: el RGB permanece encendido durante `PT` tras una pulsación.
 
 ### Changed
 
@@ -195,6 +206,12 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - Documentada la equivalencia entre un bloque `TOF` de PLC y una clase C++.
 - Documentados los conceptos `IN`, `PT`, `Q` y `ET` aplicados a un `TOF`.
 - Documentado que `TOF` temporiza cuando `IN` pasa a `false`, no cuando pasa a `true`.
+- Documentada la diferencia entre `TON`, `TOF` y `TP`.
+- Documentado el concepto de pulso temporizado.
+- Documentada la equivalencia entre un bloque `TP` de PLC y una clase C++.
+- Documentados los conceptos `IN`, `PT`, `Q` y `ET` aplicados a un `TP`.
+- Documentado el uso de `previous_in` para detectar el flanco de activación.
+- Documentada la relación del ejercicio con futuros bloques `R_TRIG` y `F_TRIG`.
 
 ### Learned
 
@@ -245,6 +262,11 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - En un `TOF`, la temporización comienza cuando `IN` pasa a `false`.
 - La variable `timing` evita reiniciar `start_time` mientras se temporiza la desconexión.
 - Una clase C++ puede representar bloques PLC con estado interno y métodos de consulta.
+- `TP` genera un pulso de duración fija ante un flanco de activación.
+- Mantener `IN` en `true` no debe reiniciar el pulso.
+- Para generar un nuevo pulso, `IN` debe volver a `false` y después pasar otra vez a `true`.
+- `previous_in` permite detectar flancos comparando el estado anterior y el estado actual de la entrada.
+- El `TP` introduce de forma natural la necesidad de bloques reutilizables de flanco como `R_TRIG` y `F_TRIG`.
 
 ### Fixed
 
@@ -269,6 +291,10 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
   - incorrecto: `if (timing = false)`;
   - correcto: `if (!timing)` o `if (timing == false)`.
 - Corregidos comentarios heredados de `TON` para reflejar correctamente la lógica de `TOF`.
+- Corregida la implementación inicial incompleta del constructor `TP()`.
+- Corregida la implementación inicial incompleta del método `update()`.
+- Añadida actualización de `previous_in` al final de `update()`.
+- Corregido texto de diagnóstico heredado de ejercicios anteriores, cambiando `Salida TON` por `Salida TP`.
 
 ---
 
@@ -382,4 +408,6 @@ Para documentación nueva o ampliada.
 ### Learned
 
 Para registrar aprendizajes relevantes derivados de errores, pruebas o decisiones técnicas.
+
+
 
