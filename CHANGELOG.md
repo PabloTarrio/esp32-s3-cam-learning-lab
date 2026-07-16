@@ -86,6 +86,16 @@ El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/) y 
   - `ET()`.
 - Añadida prueba práctica usando pulsador externo en `GPIO3` como entrada `IN`.
 - Añadido control del RGB integrado en `GPIO48` mediante la salida `Q` del temporizador.
+- Añadido ejercicio Arduino `09_tof_basico`.
+- Añadida implementación de un temporizador tipo `TOF` inspirado en PLC.
+- Añadida clase C++ `TOF` con estado interno.
+- Añadidos métodos:
+  - `update(bool in, unsigned long pt)`;
+  - `Q()`;
+  - `ET()`.
+- Añadida prueba práctica usando pulsador externo en `GPIO3` como entrada `IN`.
+- Añadido control del RGB integrado en `GPIO48` mediante la salida `Q` del temporizador.
+- Añadido ejemplo visual de retardo a la desconexión: el RGB permanece encendido tras soltar el pulsador.
 
 ### Changed
 
@@ -180,6 +190,11 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - Documentados los conceptos `IN`, `PT`, `Q` y `ET`.
 - Documentada la diferencia entre una función auxiliar de temporización y un objeto con estado interno.
 - Documentado el uso de `millis()` dentro de un temporizador no bloqueante con estado propio.
+- Documentada la diferencia entre `TON` y `TOF`.
+- Documentado el concepto de retardo a la desconexión.
+- Documentada la equivalencia entre un bloque `TOF` de PLC y una clase C++.
+- Documentados los conceptos `IN`, `PT`, `Q` y `ET` aplicados a un `TOF`.
+- Documentado que `TOF` temporiza cuando `IN` pasa a `false`, no cuando pasa a `true`.
 
 ### Learned
 
@@ -225,6 +240,11 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - Un bloque PLC puede representarse en C++ mediante una clase con métodos de actualización y consulta.
 - `update()` debe llamarse cíclicamente desde `loop()`, igual que un bloque PLC se evalúa en cada ciclo.
 - `Q()` y `ET()` deben funcionar como métodos de consulta y no modificar el estado interno del objeto.
+- `TON` retarda la activación, mientras que `TOF` retarda la desactivación.
+- En un `TOF`, `Q` se activa inmediatamente cuando `IN` es `true`.
+- En un `TOF`, la temporización comienza cuando `IN` pasa a `false`.
+- La variable `timing` evita reiniciar `start_time` mientras se temporiza la desconexión.
+- Una clase C++ puede representar bloques PLC con estado interno y métodos de consulta.
 
 ### Fixed
 
@@ -244,6 +264,11 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
   - arranque de temporización;
   - actualización de `ET`;
   - activación de `Q`.
+- Corregida la lógica inicial del `TOF`, que confundía el comportamiento con un `TON`.
+- Corregido el uso de asignación en lugar de comparación en la condición de temporización:
+  - incorrecto: `if (timing = false)`;
+  - correcto: `if (!timing)` o `if (timing == false)`.
+- Corregidos comentarios heredados de `TON` para reflejar correctamente la lógica de `TOF`.
 
 ---
 
@@ -358,17 +383,3 @@ Para documentación nueva o ampliada.
 
 Para registrar aprendizajes relevantes derivados de errores, pruebas o decisiones técnicas.
 
-
-
-
-
-### Added
-
-
-
-### Documented
-
-- Documentado el patrón encapsulado:
-
-```cpp
-current_time - previous_time >= interval
