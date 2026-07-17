@@ -1,4 +1,4 @@
-#include <PlcEdges.h>
+#include "PlcEdges.h"
 
 /***************************************************************
  * Rutina      : R_TRIG()      Tipo        : Constructor

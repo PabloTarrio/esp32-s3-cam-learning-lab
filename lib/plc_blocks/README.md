@@ -57,7 +57,9 @@ lib/
         ├── PlcTimers.h
         ├── PlcTimers.cpp
         ├── PlcEdges.h
-        └── PlcEdges.cpp
+        ├── PlcEdges.cpp
+        ├── PlcDebounce.h
+        └── PlcDebounce.cpp
 ```
 
 ---
@@ -122,6 +124,23 @@ R_TRIG::Q()
 F_TRIG::F_TRIG()
 F_TRIG::update()
 F_TRIG::Q()
+```
+
+### `PlcDebounce.h`
+
+Declara la clase para el antirrebote_
+```cpp
+class DEBOUNCE;
+```
+
+### `PlcDebounce.cpp`
+
+Implementa los métodos de antirrebote:
+
+```cpp
+DEBOUNCE::DEBOUNCE();
+DEBOUNCE::update();
+DEBOUNCE::Q();
 ```
 
 ---

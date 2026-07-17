@@ -128,6 +128,21 @@ El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/) y 
 - Añadida validación de uso de la librería local desde un proyecto PlatformIO.
 - Añadida prueba combinando `R_TRIG` y `TP` desde la librería.
 - Añadido control del RGB integrado en `GPIO48` mediante bloques reutilizables.
+- Añadido bloque reutilizable `DEBOUNCE` a la librería local `lib/plc_blocks`.
+- Añadidos archivos:
+  - `PlcDebounce.h`;
+  - `PlcDebounce.cpp`.
+- Añadida validación del bloque `DEBOUNCE` desde el ejercicio Arduino `13_plc_debounce`.
+- Añadida cadena de control reutilizable:
+
+```text
+GPIO -> DEBOUNCE -> R_TRIG -> TP -> RGB
+```
+- Añadido ejemplo de antirrebote reutilizable combinado con detección de flanco y pulso temporizado.
+- Añadido uso conjunto de:
+  - PlcDebounce.h;
+  - PlcEdges.h;
+  - PlcTimers.h.
 
 ### Changed
 
@@ -254,6 +269,17 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - Documentada la cadena lógica:
 - Documentado que la librería todavía no implementa antirrebote.
 - Documentado el futuro bloque reutilizable.
+- Documentado el bloque DEBOUNCE como filtro de estabilidad para señales booleanas.
+- Documentada la diferencia entre señal raw y señal estable.
+- Documentada la separación de responsabilidades:
+  - lectura GPIO;
+  - filtrado de rebote;
+  - detección de flanco;
+  - temporización;
+  - salida física.
+- Documentada la decisión de no añadir detectar_pulsacion_valida() como función específica a la librería.
+- Documentado que DEBOUNCE no lee GPIO directamente, sino que recibe una señal booleana ya procesada.
+- Documentado el uso de DEBOUNCE junto con R_TRIG y TP.
 
 ### Learned
 
@@ -324,6 +350,11 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
   bool boton = (digitalRead(BUTTON_PIN) == LOW)
 ```
 - El antirrebote debe abordarse como un bloque independiente posterior, no mezclarse con la validación inicial de la librería.
+- El antirrebote es más reutilizable como bloque genérico DEBOUNCE que como función específica de pulsación.
+- Una señal física debe transformarse primero en una señal lógica antes de entregarla a bloques reutilizables.
+- R_TRIG debe trabajar preferiblemente sobre una señal estable, no sobre una lectura con rebotes.
+- La cadena DEBOUNCE -> R_TRIG -> TP permite construir una lógica robusta, modular y cercana a PLC.
+- La librería plc_blocks puede crecer de forma modular añadiendo nuevos archivos .h y .cpp.
 
 ### Fixed
 
@@ -356,6 +387,14 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - Ajustada la interpretación de `INPUT_PULLUP` para trabajar con `boton = true` cuando el pulsador está físicamente pulsado.
 - Corregido el enfoque inicial de validación de R_TRIG, evitando llamar a update() con BUTTON_PIN.
 - Simplificada la validación del ejercicio 12 para centrarse en la librería base antes de añadir antirrebote reutilizable.
+- Evitada la mezcla de antirrebote local dentro de main.cpp.
+- Sustituido el enfoque de detectar_pulsacion_valida() por un bloque reutilizable DEBOUNCE.
+- Ajustado el diseño para mantener separados:
+  - entrada física;
+  - filtrado;
+  - evento;
+  - temporización;
+  - salida.
 
 ---
 
@@ -469,5 +508,6 @@ Para documentación nueva o ampliada.
 ### Learned
 
 Para registrar aprendizajes relevantes derivados de errores, pruebas o decisiones técnicas.
+
 
 

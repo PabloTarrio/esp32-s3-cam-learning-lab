@@ -28,6 +28,7 @@
   ],
   "headers": [
     "PlcTimers.h",
-    "PlcEdges.h"
+    "PlcEdges.h",
+    "PlcDebounce.h"
   ]
 }
