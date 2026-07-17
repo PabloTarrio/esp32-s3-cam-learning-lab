@@ -1,0 +1,33 @@
+{
+  "name": "plc_blocks",
+  "version": "0.1.0",
+  "description": "PLC-style timer and edge detection blocks for Arduino and ESP32 projects.",
+  "keywords": [
+    "plc",
+    "timer",
+    "ton",
+    "tof",
+    "tp",
+    "r_trig",
+    "f_trig",
+    "edge-detection",
+    "esp32",
+    "arduino",
+    "platformio"
+  ],
+  "authors": [
+    {
+      "name": "Pablo Manuel Tarrío Guirao"
+    }
+  ],
+  "frameworks": [
+    "arduino"
+  ],
+  "platforms": [
+    "espressif32"
+  ],
+  "headers": [
+    "PlcTimers.h",
+    "PlcEdges.h"
+  ]
+}

@@ -139,8 +139,8 @@ El objetivo no es únicamente crear ejemplos aislados, sino construir progresiva
 - [x] Implementación básica de `TOF`.
 - [x] Implementación básica de `TP`.
 - [x] Detección de flanco `R_TRIG` y `F_TRIG`.
-- [ ] Extracción a librería local `lib/plc_blocks`.
-- [ ] Uso de la librería desde un ejercicio Arduino.
+- [x] Extracción a librería local `lib/plc_blocks`.
+- [x] Uso de la librería desde un ejercicio Arduino.
 
 ### Conceptos
 

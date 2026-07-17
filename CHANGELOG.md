@@ -115,6 +115,19 @@ El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/) y 
 - Añadida detección de liberación mediante `F_TRIG`.
 - Añadida prueba práctica usando pulsador externo en `GPIO3`.
 - Añadida transformación de lectura física `INPUT_PULLUP` a señal lógica booleana `boton`.
+- Añadida librería local `lib/plc_blocks`.
+- Añadidos archivos de temporizadores PLC:
+  - `PlcTimers.h`;
+  - `PlcTimers.cpp`.
+- Añadidos archivos de detección de flanco:
+  - `PlcEdges.h`;
+  - `PlcEdges.cpp`.
+- Añadido archivo `library.json` para la librería local `plc_blocks`.
+- Añadido `README.md` específico para la librería `lib/plc_blocks`.
+- Añadido ejercicio Arduino `12_plc_blocks_library`.
+- Añadida validación de uso de la librería local desde un proyecto PlatformIO.
+- Añadida prueba combinando `R_TRIG` y `TP` desde la librería.
+- Añadido control del RGB integrado en `GPIO48` mediante bloques reutilizables.
 
 ### Changed
 
@@ -232,6 +245,15 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
   - antirrebote;
   - señal estable;
   - detección de flanco.
+- Documentada la estructura de la librería local `lib/plc_blocks`.
+- Documentado el uso de `lib_extra_dirs = ../../lib` en PlatformIO.
+- Documentada la inclusión de:
+  - `PlcTimers.h`;
+  - `PlcEdges.h`.
+- Documentada la separación entre implementación de bloques reutilizables y ejercicios de uso.
+- Documentada la cadena lógica:
+- Documentado que la librería todavía no implementa antirrebote.
+- Documentado el futuro bloque reutilizable.
 
 ### Learned
 
@@ -293,6 +315,15 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - Es más claro trabajar con una señal lógica `boton` que con el nivel eléctrico directo del GPIO.
 - La detección de flancos y el antirrebote son conceptos distintos.
 - Los bloques `R_TRIG` y `F_TRIG` completan el conjunto básico previo a la futura librería `lib/plc_blocks`.
+- PlatformIO puede usar librerías locales del repositorio mediante `lib_extra_dirs`.
+- Separar bloques reutilizables en una librería evita duplicar código en cada ejercicio.
+- Los bloques `R_TRIG`, `F_TRIG`, `TON`, `TOF` y `TP` pueden mantenerse fuera del `main.cpp`.
+- `R_TRIG::update()` debe recibir una señal booleana, no el número de GPIO.
+- La lectura física del GPIO debe transformarse antes en una señal lógica:
+```text
+  bool boton = (digitalRead(BUTTON_PIN) == LOW)
+```
+- El antirrebote debe abordarse como un bloque independiente posterior, no mezclarse con la validación inicial de la librería.
 
 ### Fixed
 
@@ -323,6 +354,8 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - Corregido texto de diagnóstico heredado de ejercicios anteriores, cambiando `Salida TON` por `Salida TP`.
 - Aclarada la diferencia entre flanco eléctrico del GPIO y flanco lógico de la señal `boton`.
 - Ajustada la interpretación de `INPUT_PULLUP` para trabajar con `boton = true` cuando el pulsador está físicamente pulsado.
+- Corregido el enfoque inicial de validación de R_TRIG, evitando llamar a update() con BUTTON_PIN.
+- Simplificada la validación del ejercicio 12 para centrarse en la librería base antes de añadir antirrebote reutilizable.
 
 ---
 
@@ -436,4 +469,5 @@ Para documentación nueva o ampliada.
 ### Learned
 
 Para registrar aprendizajes relevantes derivados de errores, pruebas o decisiones técnicas.
+
 
