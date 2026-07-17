@@ -135,10 +135,10 @@ El objetivo no es únicamente crear ejemplos aislados, sino construir progresiva
 - [x] RGB + botón sin bloqueos.
 - [x] Varias tareas simuladas en `loop()`.
 - [x] Máquina de estados básica.
-- [ ] Implementación básica de `TON`.
-- [ ] Implementación básica de `TOF`.
-- [ ] Implementación básica de `TP`.
-- [ ] Detección de flanco `R_TRIG` y `F_TRIG`.
+- [x] Implementación básica de `TON`.
+- [x] Implementación básica de `TOF`.
+- [x] Implementación básica de `TP`.
+- [x] Detección de flanco `R_TRIG` y `F_TRIG`.
 - [ ] Extracción a librería local `lib/plc_blocks`.
 - [ ] Uso de la librería desde un ejercicio Arduino.
 

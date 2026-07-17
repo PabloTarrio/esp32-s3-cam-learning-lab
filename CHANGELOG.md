@@ -107,6 +107,14 @@ El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/) y 
 - Añadida prueba práctica usando pulsador externo en `GPIO3` como entrada `IN`.
 - Añadido control del RGB integrado en `GPIO48` mediante la salida `Q` del temporizador.
 - Añadido ejemplo visual de pulso temporizado: el RGB permanece encendido durante `PT` tras una pulsación.
+- Añadido ejercicio Arduino `11_rtrig_ftrig_basico`.
+- Añadida implementación de detectores de flanco inspirados en PLC.
+- Añadida clase C++ `R_TRIG` para detectar flanco ascendente.
+- Añadida clase C++ `F_TRIG` para detectar flanco descendente.
+- Añadida detección de pulsación mediante `R_TRIG`.
+- Añadida detección de liberación mediante `F_TRIG`.
+- Añadida prueba práctica usando pulsador externo en `GPIO3`.
+- Añadida transformación de lectura física `INPUT_PULLUP` a señal lógica booleana `boton`.
 
 ### Changed
 
@@ -128,6 +136,7 @@ El formato está inspirado en [Keep a Changelog](https://keepachangelog.com/) y 
   - limpieza general de formato Markdown;
   - nuevas lecciones sobre antirrebote, flancos y pulsador externo;
   - nuevas lecciones de C++ sobre paso por referencia y uso correcto de parámetros.
+
 
 ### Documented
 
@@ -212,6 +221,17 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - Documentados los conceptos `IN`, `PT`, `Q` y `ET` aplicados a un `TP`.
 - Documentado el uso de `previous_in` para detectar el flanco de activación.
 - Documentada la relación del ejercicio con futuros bloques `R_TRIG` y `F_TRIG`.
+- Documentado el concepto de flanco ascendente `false -> true`.
+- Documentado el concepto de flanco descendente `true -> false`.
+- Documentada la diferencia entre estado continuo y evento puntual.
+- Documentada la equivalencia entre bloques PLC `R_TRIG` / `F_TRIG` y clases C++.
+- Documentado el uso de `previous_clk` como memoria interna del estado anterior.
+- Documentado que `R_TRIG` y `F_TRIG` no eliminan rebotes mecánicos.
+- Documentada la secuencia recomendada para uso real:
+  - lectura de entrada;
+  - antirrebote;
+  - señal estable;
+  - detección de flanco.
 
 ### Learned
 
@@ -267,6 +287,12 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - Para generar un nuevo pulso, `IN` debe volver a `false` y después pasar otra vez a `true`.
 - `previous_in` permite detectar flancos comparando el estado anterior y el estado actual de la entrada.
 - El `TP` introduce de forma natural la necesidad de bloques reutilizables de flanco como `R_TRIG` y `F_TRIG`.
+- Un detector de flanco necesita recordar el estado anterior de la señal.
+- `R_TRIG` convierte una transición `false -> true` en un evento de un solo ciclo.
+- `F_TRIG` convierte una transición `true -> false` en un evento de un solo ciclo.
+- Es más claro trabajar con una señal lógica `boton` que con el nivel eléctrico directo del GPIO.
+- La detección de flancos y el antirrebote son conceptos distintos.
+- Los bloques `R_TRIG` y `F_TRIG` completan el conjunto básico previo a la futura librería `lib/plc_blocks`.
 
 ### Fixed
 
@@ -295,6 +321,8 @@ lectura -> antirrebote -> estado estable -> detección de flanco -> acción
 - Corregida la implementación inicial incompleta del método `update()`.
 - Añadida actualización de `previous_in` al final de `update()`.
 - Corregido texto de diagnóstico heredado de ejercicios anteriores, cambiando `Salida TON` por `Salida TP`.
+- Aclarada la diferencia entre flanco eléctrico del GPIO y flanco lógico de la señal `boton`.
+- Ajustada la interpretación de `INPUT_PULLUP` para trabajar con `boton = true` cuando el pulsador está físicamente pulsado.
 
 ---
 
@@ -408,6 +436,4 @@ Para documentación nueva o ampliada.
 ### Learned
 
 Para registrar aprendizajes relevantes derivados de errores, pruebas o decisiones técnicas.
-
-
 
